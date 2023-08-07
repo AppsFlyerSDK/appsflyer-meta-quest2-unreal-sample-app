@@ -1,0 +1,210 @@
+---
+title: Meta Quest 2 Unreal
+parentDoc: 64ad6456ceede10cf0b2a120
+category: 6446526dddf659006c7ea807
+order: 2
+hidden: false
+slug: unreal-quest2
+---
+
+> Link to repository  
+> [GitHub](https://github.com/AppsFlyerSDK/appsflyer-meta-quest2-unreal-sample-app)
+
+## AppsFlyer Meta Quest 2 Unreal SDK integration
+
+AppsFlyer empowers gaming marketers to make better decisions by providing powerful tools to perform cross-platform attribution.
+
+Game attribution requires the game to integrate the AppsFlyer SDK that records first opens, consecutive sessions, and in-app events. For example, purchase events.
+We recommend you use this sample app as a reference for integrating the AppsFlyer SDK into your Unreal game. **Note**: The sample code that follows is currently only supported in a Windows environment.
+
+### Prerequisites
+
+- Unreal Engine 4.2x.
+- Follow the [Quest Integration guide for Quest 2 and Unreal Engine](https://docs.unrealengine.com/4.27/en-US/SharingAndReleasing/XRDevelopment/VR/VRPlatforms/Oculus/OculusQuest/).
+- Follow the [Quest 2 & Unreal 4.27](https://stackoverflow.com/a/70818913) integration guide.
+
+<hr/>
+
+## AppsflyerQuest2Module - Interface
+
+`AppsflyerQuest2Module.h`, included in the `appsflyer-meta-quest2-unreal-sample-app/Quest2_Sample/AppsflyerQuest2Module` folder, contains the required code and logic to connect to AppsFlyer servers and report events.
+
+### Init
+
+This method receives your API key and app ID and initializes the AppsFlyer Module.
+
+**Method signature**
+
+```c++
+void Init(const char* devkey, const char* appID)
+```
+
+**Usage**:
+
+```c++
+AppsflyerQuest2Module()->Init(<< DEV_KEY >>, << APP_ID >>);
+```
+
+<span id="app-details">**Arguments**:</span>
+
+- `DEV_KEY`: Get from the marketer or [AppsFlyer HQ](https://support.appsflyer.com/hc/en-us/articles/211719806-App-settings-#general-app-settings).
+- `APP_ID`: Your Appsflyer app id (For Quest 2, it's an android package name - for example: `com.appsflyer.example``).
+
+### Start
+
+This method sends first open/session requests to AppsFlyer.
+
+**Method signature**
+
+```c++
+void Start(bool skipFirst = false)
+```
+
+**Usage**:
+
+```c++
+// without the flag
+AppsflyerQuest2Module()->Start();
+
+// with the flag
+bool skipFirst = [SOME_CONDITION];
+AppsflyerQuest2Module()->Start(skipFirst);
+```
+
+### LogEvent
+
+This method receives an event name and JSON object and sends in-app events to AppsFlyer.
+
+**Method signature**
+
+```c++
+void LogEvent(std::string event_name, json event_parameters)
+```
+
+**Usage**:
+
+```c++
+//set event name
+std::string event_name = "af_purchase";
+//set json string
+std::string event_parameters = "{\"af_currency\":\"USD\",\"af_price\":6.66,\"af_revenue\":24.12}";
+AppsflyerQuest2Module()->LogEvent(event_name, event_parameters);
+```
+
+### GetAppsFlyerUID
+
+Get AppsFlyer's unique device ID. The SDK generates an AppsFlyer unique device ID upon app installation. When the SDK is started, this ID is recorded as the ID of the first app install.
+
+**Method signature**
+
+```c++
+std::string GetAppsFlyerUID()
+```
+
+**Usage**:
+
+```c++
+AppsflyerQuest2Module()->GetAppsFlyerUID();
+```
+
+### IsInstallOlderThanDate
+
+This method receives a date string and returns true if the game folder modification date is older than the date string. The date string format is: "2023-January-01 23:12:34"
+
+**Method signature**
+
+```c++
+bool IsInstallOlderThanDate(std::string datestring)
+```
+
+**Usage**:
+
+```c++
+// the modification date in this example is "2023-July-23 08:30:00"
+
+// will return false
+bool dateBefore = AppsflyerQuest2Module()->IsInstallOlderThanDate("2023-January-01 23:12:34");
+
+// will return true
+bool dateAfter = AppsflyerQuest2Module()->IsInstallOlderThanDate("2023-September-10 23:12:34");
+
+// example usage with skipFirst:
+bool isInstallOlderThanDate = AppsflyerLauncherModule()->IsInstallOlderThanDate("2023-April-10 23:12:34");
+AppsflyerLauncherModule()->Start(isInstallOlderThanDate);
+```
+
+## Running the sample app
+
+1. Open the UE4 engine.
+2. Choose **New Project** > **Games** > **Virtual Reality**.
+3. Name the project `Quest2_Sample` and click **Create project**.
+4. Follow the [instructions to implement AppsFlyer in your game](#implementing-appsflyer-in-your-unreal-game).
+5. Launch the sample app from the UE4 engine editor.
+6. After 24 hours, the dashboard updates and shows organic and non-organic installs and in-app events.
+
+## **Implementing AppsFlyer in your Unreal game**
+
+### Setup
+
+1. Open the project in your preferred C++ editor and in the `[YOUR-APP-NAME].Build.cs` file, add `OpenSSL` to your dependencies and `HTTP` as a private dependency:
+(example can be found in `/Quest2_Sample/Quest2_Sample.Build`)
+
+```c#
+PublicDependencyModuleNames.AddRange(new string[] { "Core", "CoreUObject", "Engine", "InputCore", "HeadMountedDisplay", "OpenSSL" });
+PrivateDependencyModuleNames.Add("HTTP");
+```
+
+2. In your Unreal Project files, under the `Source/[YOUR-APP-NAME]` directory, create a new directory named `AppsflyerQuest2Module`.
+3. Copy the following files from `appsflyer-meta-quest2-unreal-sample-app/AppsflyerQuest2Module` to the new folder:
+
+   - AppsflyerQuest2Module.cpp
+   - AppsflyerQuest2Module.cpp
+   - AppsflyerQuest2Module.h
+   - DeviceID.h
+   - RequestData.h
+
+4. Generate project files in order to add OpenSSL. [Learn more](https://forums.unrealengine.com/t/how-to-use-included-openssl/670971/2)
+5. In the `GameMode.h` file, add the `StartPlay()` function:
+
+```c++
+UCLASS(minimalapi)
+class AAppsFlyerSampleGameMode : public AGameModeBase
+{
+ GENERATED_BODY()
+
+public:
+ AAppsFlyerSampleGameMode();
+ virtual void StartPlay() override;
+};
+
+```
+
+6. Create a C++ Actor Component, attach it to a object of your choice, and add the following lines: 
+(Alternatively you may use the example component: `Quest2_Sample/Private/AF_ActorComponent.cpp`)
+
+```c++
+#include "../AppsflyerQuest2Module/AppsflyerQuest2Module.h"
+```
+
+7. Add the following function, making sure to replace `DEV_KEY` and `APP_ID` in the [`init`](#init) function with your [app details](#app-details), and report [in-app events](#logevent)
+
+```c++
+void UAF_ActorComponent::BeginPlay()
+{
+	Super::BeginPlay();
+	AppsflyerQuest2Module()->Init(<< DEV_KEY >>, << PACKAGE_NAME >>);
+	// af send firstopen/session
+	AppsflyerQuest2Module()->Start();
+	//set event name
+	std::string event_name = "af_purchase";
+	//set json string
+	std::string event_parameters = "{\"af_currency\":\"USD\",\"af_price\":6.66,\"af_revenue\":24.12}";
+	// af send inapp event
+	AppsflyerQuest2Module()->LogEvent(event_name, event_parameters);
+	// ...	
+}
+```
+
+## Resetting the attribtion
+
+Delete the APK from your Oculus Device and then Re-deploy (a new `AppsFlyerUID` will be created).
