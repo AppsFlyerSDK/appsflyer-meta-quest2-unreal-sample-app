@@ -42,13 +42,13 @@ void Init(const char* devkey, const char* appID)
 **Usage**:
 
 ```c++
-AppsflyerQuest2Module()->Init(<< DEV_KEY >>, << APP_ID >>);
+AppsflyerQuest2Module()->Init(<< DEV_KEY >>, << QUEST_APP_ID >>);
 ```
 
 <span id="app-details">**Arguments**:</span>
 
 - `DEV_KEY`: Get from the marketer or [AppsFlyer HQ](https://support.appsflyer.com/hc/en-us/articles/211719806-App-settings-#general-app-settings).
-- `APP_ID`: Your Appsflyer app id (For Quest 2, it's an android package name - for example: `com.appsflyer.example``).
+- `QUEST_APP_ID`: Your Quest Store app ID (For Quest 2, it's the number in the store URL - for example: `https://www.oculus.com/experiences/quest/XXXXXXXXXXXXXXXX/`).
 
 ### Start
 
@@ -186,13 +186,13 @@ public:
 #include "../AppsflyerQuest2Module/AppsflyerQuest2Module.h"
 ```
 
-7. Add the following function, making sure to replace `DEV_KEY` and `APP_ID` in the [`init`](#init) function with your [app details](#app-details), and report [in-app events](#logevent)
+7. Add the following function, making sure to replace `DEV_KEY` and `QUEST_APP_ID` in the [`init`](#init) function with your [app details](#app-details), and report [in-app events](#logevent)
 
 ```c++
 void UAF_ActorComponent::BeginPlay()
 {
 	Super::BeginPlay();
-	AppsflyerQuest2Module()->Init(<< DEV_KEY >>, << PACKAGE_NAME >>);
+	AppsflyerQuest2Module()->Init(<< DEV_KEY >>, << QUEST_APP_ID >>);
 	// af send firstopen/session
 	AppsflyerQuest2Module()->Start();
 	//set event name
