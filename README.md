@@ -4,7 +4,7 @@ parentDoc: 64e60f96a147a4004b5543e2
 category: 6446526dddf659006c7ea807
 order: 2
 hidden: false
-slug: unreal-quest2
+slug: meta-quest2-unreal
 ---
 
 > Link to repository  
