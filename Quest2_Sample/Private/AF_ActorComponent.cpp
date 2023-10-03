@@ -21,13 +21,15 @@ void UAF_ActorComponent::BeginPlay()
 	Super::BeginPlay();
 	AppsflyerQuest2Module()->Init(<< DEV_KEY >>, << PACKAGE_NAME >>);
 	// af send firstopen/session
-	AppsflyerQuest2Module()->Start();
+	AppsflyerPCModule()->SetCustomerUserId("cuid-test");
+	AppsflyerPCModule()->Start();
+	// AppsflyerPCModule()->Stop();
 	//set event name
 	std::string event_name = "af_purchase";
 	//set json string
 	std::string event_parameters = "{\"af_currency\":\"USD\",\"af_price\":6.66,\"af_revenue\":24.12}";
 	// af send inapp event
-	AppsflyerQuest2Module()->LogEvent(event_name, event_parameters);
+	AppsflyerPCModule()->LogEvent(event_name, event_parameters);
 	// ...
 	
 }

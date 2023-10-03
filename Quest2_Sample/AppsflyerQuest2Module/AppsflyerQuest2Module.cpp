@@ -2,7 +2,6 @@
 
 #include <stdio.h>
 #include <stdlib.h>
-
 #include "AppsflyerModule.cpp"
 
 #include <iostream>
@@ -29,23 +28,33 @@ void CAppsflyerQuest2Module::Init(const char *dkey, const char *appid)
 {
 	devkey = dkey;
 	appID = appid;
+	isStopped = true;
 }
 
 void CAppsflyerQuest2Module::Start(bool skipFirst)
 {
+	isStopped = false;
 	AppsflyerModule afc(devkey, appID);
 
-	RequestData req = buildRequestData();
+	RequestData req = CreateRequestData();
 
 	FHttpRequestRef reqH = afc.af_firstOpen_init(req, skipFirst);
 	SendHTTPReq(reqH, FIRST_OPEN_REQUEST);
 }
 
+void CAppsflyerQuest2Module::Stop()
+{
+	isStopped = true;
+}
+
 void CAppsflyerQuest2Module::LogEvent(std::string event_name, std::string event_parameters)
 {
+	if (isStopped) {
+		return;
+	}
 	AppsflyerModule afc(devkey, appID);
 
-	RequestData req = buildRequestData();
+	RequestData req = CreateRequestData();
 
 	req.event_name = event_name;
 	req.event_parameters = event_parameters;
@@ -54,10 +63,20 @@ void CAppsflyerQuest2Module::LogEvent(std::string event_name, std::string event_
 	SendHTTPReq(reqH, INAPP_EVENT_REQUEST);
 }
 
-std::string CAppsflyerQuest2Module::getAppsFlyerUID()
+std::string CAppsflyerQuest2Module::GetAppsFlyerUID()
 {
 	AppsflyerModule afc(devkey, appID);
 	return afc.get_AF_id();
+}
+
+void CAppsflyerQuest2Module::SetCustomerUserId(std::string customerUserID)
+{
+	if (!isStopped) {
+		// Cannot set CustomerUserID while the SDK has started.
+		return;
+	}
+	// Customer User ID has been set
+	cuid = customerUserID;
 }
 
 bool CAppsflyerQuest2Module::IsInstallOlderThanDate(std::string datestring)
@@ -66,7 +85,7 @@ bool CAppsflyerQuest2Module::IsInstallOlderThanDate(std::string datestring)
 	return afc.isInstallOlderThanDate(datestring);
 }
 
-RequestData CAppsflyerQuest2Module::buildRequestData()
+RequestData CAppsflyerQuest2Module::CreateRequestData()
 {
 	AppsflyerModule afc(devkey, appID);
 
@@ -92,6 +111,10 @@ RequestData CAppsflyerQuest2Module::buildRequestData()
 	af_id.type = "custom";
 	af_id.value = afc.get_AF_id().c_str();
 	req.device_ids.insert(req.device_ids.end(), af_id);
+
+	if (!cuid.empty()) {
+		req.customer_user_id = cuid;
+	}
 
 	return req;
 }
