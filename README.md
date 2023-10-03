@@ -107,6 +107,26 @@ std::string GetAppsFlyerUID()
 AppsflyerQuest2Module()->GetAppsFlyerUID();
 ```
 
+### SetCustomerUserId
+
+Setting your own customer ID enables you to cross-reference your own unique ID with AppsFlyer’s unique ID and other devices’ IDs.
+This ID is available in raw-data reports and in the Postback APIs for cross-referencing with your internal IDs.
+Can be used only before calling `Start()`.
+
+**Method signature**
+
+```c++
+void SetCustomerUserId(std::string cuid)
+```
+
+**Usage**:
+
+```c++
+AppsflyerQuest2Module()->Init(DEV_KEY, APP_ID);
+AppsflyerQuest2Module()->SetCustomerUserId("Test-18-9-23");
+AppsflyerQuest2Module()->Start();
+```
+
 ### IsInstallOlderThanDate
 
 This method receives a date string and returns true if the game folder modification date is older than the date string. The date string format is: "2023-January-01 23:12:34"
