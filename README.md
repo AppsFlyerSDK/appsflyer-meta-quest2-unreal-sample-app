@@ -129,9 +129,8 @@ AppsflyerQuest2Module()->GetAppsFlyerUID();
 
 ### SetCustomerUserId
 
-Setting your own customer ID enables you to cross-reference your own unique ID with AppsFlyer’s unique ID and other devices’ IDs.
-This ID is available in raw-data reports and in the Postback APIs for cross-referencing with your internal IDs.
-Can be used only before calling `Start()`.
+This method sets a customer ID that enables you to cross-reference your unique ID with the AppsFlyer unique ID and other device IDs. Note: You can only use this method before calling `Start()`.
+The customer ID is available in raw data reports and in the postbacks sent via API.
 
 **Method signature**
 
