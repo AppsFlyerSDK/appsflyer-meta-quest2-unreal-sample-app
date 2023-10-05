@@ -71,6 +71,26 @@ bool skipFirst = [SOME_CONDITION];
 AppsflyerQuest2Module()->Start(skipFirst);
 ```
 
+### Stop
+
+This method stops the SDK from functioning and communicating with AppsFlyer servers. It's used when implementing user opt-in/opt-out.
+
+**Method signature**
+
+```c#
+void Stop()
+```
+
+**Usage**:
+
+```c#
+// Starting the SDK
+AppsflyerQuest2Module()->Start();
+// ...
+// Stopping the SDK, preventing further communication with AppsFlyer
+AppsflyerQuest2Module()->Stop();
+```
+
 ### LogEvent
 
 This method receives an event name and JSON object and sends in-app events to AppsFlyer.
