@@ -15,6 +15,9 @@
 #include "Interfaces/IHttpRequest.h"
 #include "Interfaces/IHttpResponse.h"
 
+#include <codecvt> // codecvt_utf8
+#include <locale>  // wstring_convert
+
 class CAppsflyerQuest2Module
 {
 public:
@@ -25,13 +28,13 @@ public:
 	void Start(bool skipFirst = false);
 	void Stop();
 	// This method receives an event name and json object and sends an in-app event to AppsFlyer.
-	void LogEvent(std::string event_name, std::string event_parameters);
+	void LogEvent(std::string event_name, std::string event_parameters, std::string event_custom_parameters = "");
 	// get AppsFlyer's unique device ID.
 	std::string GetAppsFlyerUID();
 	void SetCustomerUserId(std::string customerUserID);
 	// This method receives a date string and returns true if the game folder modification date is older than the date string.
 	bool IsInstallOlderThanDate(std::string datestring);
-
+	std::string to_utf8(std::wstring& wide_string);
 private:
 	const char *devkey;
 	const char *appID;
