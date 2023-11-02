@@ -2,7 +2,7 @@
 
 
 #include "AF_ActorComponent.h"
-#include "../AppsflyerQuest2Module/AppsflyerQuest2Module.h"
+#include "../AppsflyerPCModule/AppsflyerQuest2Module.h"
 
 // Sets default values for this component's properties
 UAF_ActorComponent::UAF_ActorComponent()
@@ -19,18 +19,29 @@ UAF_ActorComponent::UAF_ActorComponent()
 void UAF_ActorComponent::BeginPlay()
 {
 	Super::BeginPlay();
-	AppsflyerQuest2Module()->Init(<< DEV_KEY >>, << PACKAGE_NAME >>);
+
+	// af module init
+	AppsflyerQuest2Module()->Init(<< DEV_KEY >> , << PACKAGE_NAME >> );
+
 	// af send firstopen/session
-	AppsflyerPCModule()->SetCustomerUserId("cuid-test");
-	AppsflyerPCModule()->Start();
-	// AppsflyerPCModule()->Stop();
-	//set event name
+	AppsflyerQuest2Module()->Start();
+
+	// set event name
 	std::string event_name = "af_purchase";
-	//set json string
+	// set json string
 	std::string event_parameters = "{\"af_currency\":\"USD\",\"af_price\":6.66,\"af_revenue\":24.12}";
 	// af send inapp event
-	AppsflyerPCModule()->LogEvent(event_name, event_parameters);
-	// ...
+	AppsflyerQuest2Module()->LogEvent(event_name, event_parameters);
+
+	// set non-English values for testing UTF-8 support
+	std::wstring ws = L"車B1234 こんにちは";
+	std::wstring ws2 = L"新人邀约购物日";
+	std::string event_custom_parameters = "{\"goodsName\":\"" + AppsflyerQuest2Module()->to_utf8(ws) + "\",\"goodsName2\":\"" + AppsflyerQuest2Module()->to_utf8(ws2) + "\"}";
+	// af send inapp event with custom params
+	AppsflyerQuest2Module()->LogEvent(event_name, event_parameters, event_custom_parameters);
+
+	// stop the SDK
+	AppsflyerQuest2Module()->Stop();
 	
 }
 

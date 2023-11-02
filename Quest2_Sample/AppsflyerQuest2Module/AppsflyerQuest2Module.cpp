@@ -47,7 +47,7 @@ void CAppsflyerQuest2Module::Stop()
 	isStopped = true;
 }
 
-void CAppsflyerQuest2Module::LogEvent(std::string event_name, std::string event_parameters)
+void CAppsflyerQuest2Module::LogEvent(std::string event_name, std::string event_parameters, std::string event_custom_parameters);
 {
 	if (isStopped) {
 		return;
@@ -58,6 +58,7 @@ void CAppsflyerQuest2Module::LogEvent(std::string event_name, std::string event_
 
 	req.event_name = event_name;
 	req.event_parameters = event_parameters;
+	req.event_custom_parameters = event_custom_parameters;
 
 	FHttpRequestRef reqH = afc.af_inappEvent(req);
 	SendHTTPReq(reqH, INAPP_EVENT_REQUEST);
@@ -83,6 +84,12 @@ bool CAppsflyerQuest2Module::IsInstallOlderThanDate(std::string datestring)
 {
 	AppsflyerModule afc(devkey, appID);
 	return afc.isInstallOlderThanDate(datestring);
+}
+
+std::string CAppsflyerQuest2Module::to_utf8(std::wstring &wide_string)
+{
+    static std::wstring_convert<std::codecvt_utf8<wchar_t>> utf8_conv;
+	return utf8_conv.to_bytes(wide_string);
 }
 
 RequestData CAppsflyerQuest2Module::CreateRequestData()

@@ -98,17 +98,30 @@ This method receives an event name and JSON object and sends in-app events to Ap
 **Method signature**
 
 ```c++
-void LogEvent(std::string event_name, json event_parameters)
+void LogEvent(std::string event_name, std::string event_values, std::string custom_event_values = "")
 ```
+
+**Arguments**
+
+- `std::string event_name`-
+- `std::string event_parameters`: dictionary object which contains the [predefined event parameters](https://dev.appsflyer.com/hc/docs/ctv-log-event-event-parameters).
+- `std::string event_custom_parameters` (non-mandatory): dictionary object which contains the any custom event parameters. For non-English values, please use [UTF-8 encoding](#to_utf8).
 
 **Usage**:
 
 ```c++
-//set event name
+// Setting the event parameters json string and event name
 std::string event_name = "af_purchase";
-//set json string
 std::string event_parameters = "{\"af_currency\":\"USD\",\"af_price\":6.66,\"af_revenue\":24.12}";
+// Send the InApp event request
 AppsflyerQuest2Module()->LogEvent(event_name, event_parameters);
+
+// Set non-English values for testing UTF-8 support
+std::wstring ws = L"車B1234 こんにちは";
+std::wstring ws2 = L"新人邀约购物日";
+std::string event_custom_parameters = "{\"goodsName\":\"" + AppsflyerQuest2Module()->to_utf8(ws) + "\",\"goodsName2\":\"" + AppsflyerQuest2Module()->to_utf8(ws2) + "\"}";
+// Send inapp event with custom params
+AppsflyerQuest2Module()->LogEvent(event_name, event_parameters, event_custom_parameters);
 ```
 
 ### GetAppsFlyerUID
@@ -144,6 +157,24 @@ void SetCustomerUserId(std::string cuid)
 AppsflyerQuest2Module()->Init(DEV_KEY, APP_ID);
 AppsflyerQuest2Module()->SetCustomerUserId("Test-18-9-23");
 AppsflyerQuest2Module()->Start();
+```
+
+
+### To_utf8
+
+This method receives a reference of a `std::wstring` and returns UTF-8 encoded `std::string`
+
+**Method signature**
+
+```c++
+std::string to_utf8(std::wstring& wide_string);
+```
+**Usage**:
+```c++
+// Set non-English values for testing UTF-8 support
+std::wstring ws = L"車B1234 こんにちは";
+std::wstring ws2 = L"新人邀约购物日";
+std::string event_custom_parameters = "{\"goodsName\":\"" + AppsflyerQuest2Module()->to_utf8(ws) + "\",\"goodsName2\":\"" + AppsflyerQuest2Module()->to_utf8(ws2) + "\"}";
 ```
 
 ### IsInstallOlderThanDate
@@ -231,16 +262,29 @@ public:
 void UAF_ActorComponent::BeginPlay()
 {
 	Super::BeginPlay();
-	AppsflyerQuest2Module()->Init(<< DEV_KEY >>, << QUEST_APP_ID >>);
+	// af module init
+	AppsflyerQuest2Module()->Init(<< DEV_KEY >> , << PACKAGE_NAME >> );
+
+
 	// af send firstopen/session
 	AppsflyerQuest2Module()->Start();
-	//set event name
+
+	// set event name
 	std::string event_name = "af_purchase";
-	//set json string
+	// set json string
 	std::string event_parameters = "{\"af_currency\":\"USD\",\"af_price\":6.66,\"af_revenue\":24.12}";
 	// af send inapp event
 	AppsflyerQuest2Module()->LogEvent(event_name, event_parameters);
-	// ...	
+
+	// set non-English values for testing UTF-8 support
+	std::wstring ws = L"車B1234 こんにちは";
+	std::wstring ws2 = L"新人邀约购物日";
+	std::string event_custom_parameters = "{\"goodsName\":\"" + AppsflyerQuest2Module()->to_utf8(ws) + "\",\"goodsName2\":\"" + AppsflyerQuest2Module()->to_utf8(ws2) + "\"}";
+	// af send inapp event with custom params
+	AppsflyerQuest2Module()->LogEvent(event_name, event_parameters, event_custom_parameters);
+
+	// stop the SDK
+	AppsflyerQuest2Module()->Stop();
 }
 ```
 
