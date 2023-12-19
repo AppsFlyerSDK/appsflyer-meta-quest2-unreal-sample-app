@@ -12,10 +12,11 @@ slug: meta-quest2-unreal
 
 ## AppsFlyer Meta Quest 2 Unreal SDK integration
 
-AppsFlyer empowers gaming marketers to make better decisions by providing powerful tools to perform cross-platform attribution.
+Integrate your Meta Quest Unreal app or game with AppsFlyer to measure the performance of campaigns marketing these apps.
 
-Game attribution requires the game to integrate the AppsFlyer SDK that records first opens, consecutive sessions, and in-app events. For example, purchase events.
-We recommend you use this sample app as a reference for integrating the AppsFlyer SDK into your Unreal game. **Note**: The sample code that follows is currently only supported in a Windows environment.
+Game attribution and user measurement require the game to integrate an AppsFlyer SDK that records first opens, sessions, and in-app events. For example, purchase events.
+
+**Note**: The sample code that follows is currently only supported in a Windows environment.
 
 ### Prerequisites
 
@@ -103,9 +104,9 @@ void LogEvent(std::string event_name, std::string event_values, std::string cust
 
 **Arguments**
 
-- `std::string event_name`-
-- `std::string event_parameters`: dictionary object which contains the [predefined event parameters](https://dev.appsflyer.com/hc/docs/ctv-log-event-event-parameters).
-- `std::string event_custom_parameters` (non-mandatory): dictionary object which contains the any custom event parameters. For non-English values, please use [UTF-8 encoding](#to_utf8).
+- `std::string event_name`: The name of the event.
+- `std::string event_parameters`: String which contains the [predefined event parameters](https://dev.appsflyer.com/hc/docs/ctv-log-event-event-parameters).
+- `std::string event_custom_parameters` [Optional]: String which contains the any custom event parameters. For non-English values, please use [UTF-8 encoding](#to_utf8).
 
 **Usage**:
 
@@ -126,7 +127,7 @@ AppsflyerQuest2Module()->LogEvent(event_name, event_parameters, event_custom_par
 
 ### GetAppsFlyerUID
 
-Get AppsFlyer's unique device ID. The SDK generates an AppsFlyer unique device ID upon app installation. When the SDK is started, this ID is recorded as the ID of the first app install.
+Get the AppsFlyer unique device ID. The SDK generates an AppsFlyer unique device ID upon app installation. When the SDK is started, this ID is recorded as the ID of the first app install.
 
 **Method signature**
 
@@ -142,7 +143,7 @@ AppsflyerQuest2Module()->GetAppsFlyerUID();
 
 ### SetCustomerUserId
 
-This method sets a customer ID that enables you to cross-reference your unique ID with the AppsFlyer unique ID and other device IDs. Note: You can only use this method before calling `Start()`.
+This method sets a customer ID that enables you to cross-reference your unique ID with the AppsFlyer unique ID and other device IDs. **Note**: You can only use this method before calling `Start()`.
 The customer ID is available in raw data reports and in the postbacks sent via API.
 
 **Method signature**
@@ -179,7 +180,7 @@ std::string event_custom_parameters = "{\"goodsName\":\"" + AppsflyerQuest2Modul
 
 ### IsInstallOlderThanDate
 
-This method receives a date string and returns true if the game folder modification date is older than the date string. The date string format is: "2023-January-01 23:12:34"
+This method receives a date string and returns true if the game folder modification date is older than the date string. The date string format is: "2023-January-01 23:12:34".
 
 **Method signature**
 
